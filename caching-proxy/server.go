@@ -54,6 +54,8 @@ func (ps *ProxyStore) Cache(path string, res HttpResponse) {
 }
 
 func (ps *ProxyStore) Clear() {
+	ps.Mutex.Lock()
+	defer ps.Mutex.Unlock()
 	for key := range ps.Store {
 		delete(ps.Store, key)
 	}
