@@ -3,6 +3,8 @@ package cachingproxy
 import (
 	"encoding/json"
 	"flag"
+	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -73,18 +75,20 @@ func NewProxyHandler(proxyServer ProxyServer) *ProxyHandler {
 
 func MainServerCall(path string) interface{} {
 	reqUrl := BaseUrl + path
+	log.Println("Calling api call on url path: ", reqUrl)
 	res, err := http.Get(reqUrl)
 	if err != nil {
 		log.Println("Err: ", err)
 		return nil
 	}
+	body, _ := io.ReadAll(res.Body)
+	resBody := string(body)
 	defer res.Body.Close()
-	resBody := res.Body
 	return resBody
 }
 
 func (h *ProxyHandler) HandleHttpRequest(w http.ResponseWriter, r *http.Request) {
-	path := r.URL.RawPath
+	path := r.URL.Path
 	res, ok := h.proxyServer.Get(path)
 	if !ok {
 		w.Header().Set("X-Cache", "MISS")
@@ -103,11 +107,12 @@ func (h *ProxyHandler) HandleHttpRequest(w http.ResponseWriter, r *http.Request)
 			log.Println("Err: ", err)
 		}
 		return
-	}
-	w.Header().Set("X-Cache", "HIT")
-	log.Println("X-Cache: HIT")
-	if err := json.NewEncoder(w).Encode(res); err != nil {
-		log.Println("Err: ", err)
+	} else {
+		w.Header().Set("X-Cache", "HIT")
+		log.Println("X-Cache: HIT")
+		if err := json.NewEncoder(w).Encode(res); err != nil {
+			log.Println("Err: ", err)
+		}
 	}
 }
 
@@ -123,7 +128,10 @@ func ProxyServerStart() {
 		os.Exit(1)
 	}
 
-	Addr = ":" + string(rune(*port))
+	log.Println("Port: ", *port, " Origin: ", *origin)
+
+	Addr = fmt.Sprintf(":%d", *port)
+	BaseUrl = *origin
 
 	proxyServer := NewProxyServer()
 	proxyHandler := NewProxyHandler(proxyServer)
@@ -132,6 +140,20 @@ func ProxyServerStart() {
 		proxyHandler.proxyServer.Clear()
 	}
 
+	log.Println("Starting server on port: ", Addr, " and listing to base url: ", BaseUrl)
+
 	http.HandleFunc("/", proxyHandler.HandleHttpRequest)
-	http.ListenAndServe(Addr, nil)
+	if err := http.ListenAndServe(Addr, nil); err != nil {
+		log.Println("Err: ", err)
+	}
 }
+
+// https://roadmap.sh/projects/caching-server
+
+/**
+Future Features
+
+1. Add cache expiry time
+2. Auto expire cache
+3. Expire cache via api call like /expire/cache
+**/
