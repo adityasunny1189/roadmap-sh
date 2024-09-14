@@ -7,3 +7,6 @@ URL: https://roadmap.sh/backend/projects
 
 ## Markdown Notes App
 - https://roadmap.sh/projects/markdown-note-taking-app
+
+## Url Shortner
+- https://roadmap.sh/projects/url-shortening-service
