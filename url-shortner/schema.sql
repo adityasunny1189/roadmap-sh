@@ -1,6 +1,6 @@
-create database url_collections;
+CREATE DATABASE url_collections;
 
-use url_collections;
+USE url_collections;
 
 CREATE TABLE urls (
     id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
@@ -10,13 +10,9 @@ CREATE TABLE urls (
     updated_at TIMESTAMP NOT NULL DEFAULT(NOW())
 );
 
-
-insert into urls 
-(original_url, short_code) 
-values 
-("https://www.goguru.dev", "goguru");
-
-
-
+INSERT INTO urls 
+    (original_url, short_code) 
+VALUES 
+    ("https://www.goguru.dev", "goguru");
 
 SELECT * FROM urls;
