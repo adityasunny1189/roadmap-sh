@@ -1,0 +1,6 @@
+version: "3"
+services:
+  urlshortner:
+    image: url-shortner
+    ports:
+      - 8081:8081
