@@ -1,21 +1,33 @@
 package domain
 
-import "github.com/google/uuid"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type PaymentState string
 
-// Todo: Create all possible payment state
 const (
-	SUCCESS PaymentState = "Success"
-	FAILED  PaymentState = "Failed"
+	PENDING  PaymentState = "PAYMENT_PENDING"
+	SUCCESS  PaymentState = "PAYMENT_SUCCESS"
+	FAILED   PaymentState = "PAYMENT_FAILED"
+	CANCELED PaymentState = "PAYMENT_CANCELED"
 )
 
-// Todo: Create state machine to handle payment state change
+type PaymentMethod string
+
+const (
+	RAZORPAY PaymentMethod = "RAZORPAY"
+	STRIPE   PaymentMethod = "STRIPE"
+	PAYPAL   PaymentMethod = "PAYPAL"
+)
 
 type Payment struct {
-	Id      uuid.UUID
-	UserId  uuid.UUID
-	OrderId uuid.UUID
-	State   PaymentState
-	Amount  float64
+	Id            uuid.UUID     `json:"id"`
+	OrderId       uuid.UUID     `json:"order_id"`
+	PaymentMethod PaymentMethod `json:"payment_method"`
+	PaymentState  PaymentState  `json:"payment_state"`
+	CreatedAt     time.Time     `json:"created_at"`
+	UpdatedAt     time.Time     `json:"updated_at"`
 }

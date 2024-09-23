@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS products (
     id CHAR(30) PRIMARY KEY,
     product_name VARCHAR(100) NOT NULL,
     product_description TEXT NOT NULL,
+    category VARCHAR(100) NOT NULL,
     price FLOAT NOT NULL,
     image_url VARCHAR(255) NOT NULL
 );
@@ -29,7 +30,8 @@ CREATE TABLE IF NOT EXISTS inventory (
 CREATE TABLE IF NOT EXISTS carts (
     id CHAR(30) PRIMARY KEY
     user_id CHAR(30) NOT NULL FOREIGN KEY REFERENCES users(id),
-    cart_state ENUM('ACTIVE', 'INACTIVE') DEFAULT('ACTIVE'),
+    cart_state ENUM('CART_CREATED', 'CART_COMPLETED', 'CART_CANCELED') DEFAULT('CART_CREATED'),
+    cart_amount FLOAT NOT NULL,
     created_at TIMESTAMP DEFAULT(NOW()),
     updated_at TIMESTAMP DEFAULT(NOW())
 );
@@ -48,7 +50,7 @@ CREATE TABLE IF NOT EXISTS orders (
     user_id CHAR(30) NOT NULL FOREIGN KEY REFERENCES users(id), 
     cart_id CHAR(30) NOT NULL FOREIGN KEY REFERENCES carts(id),
     total_price FLOAT NOT NULL,
-    order_state ENUM('CREATED', 'COMPLETED', 'CANCELLED') DEFAULT('CREATED'),
+    order_state ENUM('ORDER_CREATED', 'ORDER_COMPLETED', 'ORDER_CANCELLED') DEFAULT('ORDER_CREATED'),
     created_at TIMESTAMP DEFAULT(NOW()),
     updated_at TIMESTAMP DEFAULT(NOW())
 );
@@ -56,24 +58,9 @@ CREATE TABLE IF NOT EXISTS orders (
 CREATE TABLE IF NOT EXISTS payments (
     id CHAR(30) PRIMARY KEY,
     order_id INT NOT NULL FOREIGN KEY REFERENCES orders(id),
-    payment_method ENUM('STRIPE', 'RAZORPAY', 'PHONEPAY', 'PAYPAL') NOT NULL, -- For now we only have stripe
-    payment_status ENUM('PENDING', 'COMPLETED', 'FAILED') DEFAULT('PENDING'),
+    payment_method ENUM('STRIPE', 'RAZORPAY', 'PAYPAL') NOT NULL, -- For now we only have stripe
+    payment_state ENUM('PAYMENT_PENDING', 'PAYMENT_SUCCESS', 'PAYMENT_FAILED', 'PAYMENT_CANCELED') DEFAULT('PAYMENT_PENDING'),
     created_at TIMESTAMP DEFAULT(NOW()),
     updated_at TIMESTAMP DEFAULT(NOW())
 );
-
-
-INSERT INTO products 
-    (p_name, p_description, price) 
-VALUES
-    ("Tomato", "Round red vegetable", 10),
-    ("Potato", "Brown vegetable", 12);
-
-SELECT * FROM products p 
-JOIN 
-inventory i ON p.id = i.product_id 
-WHERE 
-i.quantity > 0 AND p.price > 100;
-
-
 

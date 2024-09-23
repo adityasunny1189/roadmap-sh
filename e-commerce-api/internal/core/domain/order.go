@@ -1,21 +1,25 @@
 package domain
 
-import "github.com/google/uuid"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type OrderState string
 
 const (
-	CREATED OrderState = "Created"
-	COMPLETED OrderState = ""
-	PAYMENT_FAILURE OrderState = ""
-	CANCELLED OrderState = ""
-	// Todo: To add more state 
+	CREATED   OrderState = "ORDER_CREATED"
+	COMPLETED OrderState = "ORDER_COMPLETED"
+	CANCELLED OrderState = "ORDER_CANCELLED"
 )
 
-// Todo: Create a state machine to handle state change
-
 type Order struct {
-	Id     uuid.UUID
-	CartId uuid.UUID
-	State  OrderState
+	Id         uuid.UUID  `json:"id"`
+	UserID     uuid.UUID  `json:"user_id"`
+	CartId     uuid.UUID  `json:"cart_id"`
+	TotalPrice float64    `json:"total_price"`
+	OrderState OrderState `json:"order_state"`
+	CreatedAt  time.Time  `json:"created_at"`
+	UpdatedAt  time.Time  `json:"updated_at"`
 }
