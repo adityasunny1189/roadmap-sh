@@ -1,8 +1,6 @@
 package domain
 
 import (
-	"time"
-
 	"github.com/google/uuid"
 )
 
@@ -19,8 +17,6 @@ type Cart struct {
 	UserId     uuid.UUID `json:"user_id"`
 	CartState  CartState `json:"cart_state"`
 	CartAmount float64   `json:"cart_amount"`
-	CreatedAt  time.Time `json:"created_at"`
-	UpdatedAt  time.Time `json:"updated_at"`
 }
 
 type CartItem struct {
@@ -28,6 +24,4 @@ type CartItem struct {
 	CartId    uuid.UUID `json:"cart_id"`
 	ProductId uuid.UUID `json:"product_id"`
 	Quantity  int       `json:"quantity"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
 }

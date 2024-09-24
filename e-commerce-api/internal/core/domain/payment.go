@@ -1,8 +1,6 @@
 package domain
 
 import (
-	"time"
-
 	"github.com/google/uuid"
 )
 
@@ -28,6 +26,4 @@ type Payment struct {
 	OrderId       uuid.UUID     `json:"order_id"`
 	PaymentMethod PaymentMethod `json:"payment_method"`
 	PaymentState  PaymentState  `json:"payment_state"`
-	CreatedAt     time.Time     `json:"created_at"`
-	UpdatedAt     time.Time     `json:"updated_at"`
 }

@@ -1,8 +1,6 @@
 package domain
 
 import (
-	"time"
-
 	"github.com/google/uuid"
 )
 
@@ -20,6 +18,4 @@ type Order struct {
 	CartId     uuid.UUID  `json:"cart_id"`
 	TotalPrice float64    `json:"total_price"`
 	OrderState OrderState `json:"order_state"`
-	CreatedAt  time.Time  `json:"created_at"`
-	UpdatedAt  time.Time  `json:"updated_at"`
 }

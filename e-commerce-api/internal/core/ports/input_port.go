@@ -1,3 +1,4 @@
 package ports
 
-type 
+type UserRepository interface {
+}
