@@ -4,6 +4,8 @@ import (
 	"log"
 	"net/http"
 
+	rest "command-line-arguments/Users/adityapathak/Desktop/learning/golang/roadmap-sh/e-commerce-api/internal/transport/http/rest/e_commerce_handler.go"
+
 	"github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/common/config"
 	"github.com/gorilla/mux"
 )
@@ -14,9 +16,11 @@ func RunECommerceAPI() {
 
 	r := mux.NewRouter()
 
+	handler := rest.NewECommerceHandler()
+
 	authSubroute := r.PathPrefix("/auth").Subrouter()
-	authSubroute.HandleFunc("/signup", nil).Methods("POST")
-	authSubroute.HandleFunc("/login", nil).Methods("POST")
+	authSubroute.HandleFunc("/signup", handler.SignUp).Methods("POST")
+	authSubroute.HandleFunc("/login", handler.Login).Methods("POST")
 
 	productSubroute := r.PathPrefix("/product").Subrouter()
 	productSubroute.HandleFunc("/", nil).Methods("GET")

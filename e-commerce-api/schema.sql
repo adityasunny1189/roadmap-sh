@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS products (
 
 CREATE TABLE IF NOT EXISTS inventory (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    product_id CHAR(30) NOT NULL, 
+    product_id INT NOT NULL, 
     quantity INT NOT NULL,
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );

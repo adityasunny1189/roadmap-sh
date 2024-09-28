@@ -25,7 +25,9 @@ type CartService interface {
 }
 
 type OrderService interface {
-	
+	CreateOrder(order domain.Order) (domain.Order, error)
+	GetOrder(orderID string) (domain.Order, error)
+	GetOrdersByUserID(userID string) ([]domain.Order, error)
 }
 
 type PaymentService interface {
