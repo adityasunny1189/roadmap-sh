@@ -1,16 +1,12 @@
 package domain
 
-import (
-	"github.com/google/uuid"
-)
-
 type PaymentState string
 
 const (
-	PENDING  PaymentState = "PAYMENT_PENDING"
-	SUCCESS  PaymentState = "PAYMENT_SUCCESS"
-	FAILED   PaymentState = "PAYMENT_FAILED"
-	CANCELED PaymentState = "PAYMENT_CANCELED"
+	PAYMENT_PENDING  PaymentState = "PAYMENT_PENDING"
+	PAYMENT_SUCCESS  PaymentState = "PAYMENT_SUCCESS"
+	PAYMENT_FAILED   PaymentState = "PAYMENT_FAILED"
+	PAYMENT_CANCELED PaymentState = "PAYMENT_CANCELED"
 )
 
 type PaymentMethod string
@@ -22,8 +18,8 @@ const (
 )
 
 type Payment struct {
-	Id            uuid.UUID     `json:"id"`
-	OrderId       uuid.UUID     `json:"order_id"`
+	Id            int64         `json:"id"`
+	OrderId       int64         `json:"order_id"`
 	PaymentMethod PaymentMethod `json:"payment_method"`
 	PaymentState  PaymentState  `json:"payment_state"`
 }

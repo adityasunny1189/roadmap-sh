@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS carts (
 CREATE TABLE IF NOT EXISTS cart_items (
     id CHAR(30) PRIMARY KEY,
     cart_id CHAR(30) NOT NULL,
-    product_id CHAR(30) NOT NULL,
+    product_id INT NOT NULL,
     quantity INT NOT NULL,
     created_at TIMESTAMP DEFAULT(NOW()),
     updated_at TIMESTAMP DEFAULT(NOW()),
