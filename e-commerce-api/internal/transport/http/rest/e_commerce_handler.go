@@ -1,17 +1,23 @@
 package rest
 
 import (
-	dtos "command-line-arguments/Users/adityapathak/Desktop/learning/golang/roadmap-sh/e-commerce-api/internal/dtos/user_dto.go"
 	"encoding/json"
 	"net/http"
+
+	"github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/core/ports"
+	"github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/dtos"
 )
 
 type ECommerceHandler struct {
-
+	userService    ports.UserService
+	productService ports.ProductService
 }
 
-func NewECommerceHandler() *ECommerceHandler {
-	return &ECommerceHandler{}
+func NewECommerceHandler(userService ports.UserService, productService ports.ProductService) *ECommerceHandler {
+	return &ECommerceHandler{
+		userService:    userService,
+		productService: productService,
+	}
 }
 
 func (h *ECommerceHandler) SignUp(w http.ResponseWriter, r *http.Request) {
@@ -28,6 +34,3 @@ func (h *ECommerceHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 func (h *ECommerceHandler) Login(w http.ResponseWriter, r *http.Request) {
 	var loginReq dtos.UserLoginRequest
 }
-
-
-

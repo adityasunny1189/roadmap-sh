@@ -4,19 +4,30 @@ import (
 	"log"
 	"net/http"
 
-	rest "command-line-arguments/Users/adityapathak/Desktop/learning/golang/roadmap-sh/e-commerce-api/internal/transport/http/rest/e_commerce_handler.go"
-
 	"github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/common/config"
+	"github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/core/services"
+	"github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/storage/database"
+	"github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/storage/repository"
+	"github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/transport/http/rest"
 	"github.com/gorilla/mux"
 )
 
 func RunECommerceAPI() {
-	// This is where the code for the e-commerce API will go
-	cfg := config.NewConfig()
-
 	r := mux.NewRouter()
 
-	handler := rest.NewECommerceHandler()
+	cfg := config.NewConfig()
+	db := database.Load(cfg)
+
+	// Declare all the repositories
+	userRepo := repository.NewUserRepository(db)
+	productRepo := repository.NewProductRepository(db)
+
+	// Declare all the services
+	userService := services.NewUserService(userRepo)
+	productService := services.NewProductService(productRepo)
+
+	// Declare all the handlers
+	handler := rest.NewECommerceHandler(userService, productService)
 
 	authSubroute := r.PathPrefix("/auth").Subrouter()
 	authSubroute.HandleFunc("/signup", handler.SignUp).Methods("POST")

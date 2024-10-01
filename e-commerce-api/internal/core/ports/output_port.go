@@ -1,6 +1,6 @@
 package ports
 
-import domain "command-line-arguments/Users/adityapathak/Desktop/learning/golang/roadmap-sh/e-commerce-api/internal/core/domain"
+import "github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/core/domain"
 
 type UserService interface {
 	CreateUser(user domain.User) (domain.User, error)
