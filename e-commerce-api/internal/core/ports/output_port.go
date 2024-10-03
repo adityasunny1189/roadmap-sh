@@ -1,9 +1,12 @@
 package ports
 
-import "github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/core/domain"
+import (
+	"github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/core/domain"
+	"github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/dtos"
+)
 
 type UserService interface {
-	CreateUser(user domain.User) (domain.User, error)
+	CreateUser(createUserReq dtos.UserSignUpRequest) (domain.User, error)
 	GetUser(userID string) (domain.User, error)
 	UpdateUser(userID string, user domain.User) (domain.User, error)
 }

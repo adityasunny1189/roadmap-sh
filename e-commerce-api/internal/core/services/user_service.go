@@ -3,6 +3,7 @@ package services
 import (
 	"github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/core/domain"
 	"github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/core/ports"
+	"github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/dtos"
 )
 
 type userService struct {
@@ -10,7 +11,7 @@ type userService struct {
 }
 
 // CreateUser implements ports.UserService.
-func (u *userService) CreateUser(user domain.User) (domain.User, error) {
+func (u *userService) CreateUser(createUserReq dtos.UserSignUpRequest) (domain.User, error) {
 	panic("unimplemented")
 }
 
