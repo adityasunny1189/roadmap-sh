@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/common/utils/auth"
+	"github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/core/domain"
 	"github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/core/ports"
 	"github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/dtos"
 	transport "github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/transport/http"
@@ -55,12 +56,47 @@ func (h *ECommerceHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 
 func (h *ECommerceHandler) Login(w http.ResponseWriter, r *http.Request) {
 	var loginReq dtos.UserLoginRequest
+	if err := json.NewDecoder(r.Body).Decode(&loginReq); err != nil {
+		log.Println("Loginhandler :: Error occured while parsing req body: ", err)
+		transport.SendErrorResponse(w, dtos.TOAST, err.Error())
+	}
+
+	// call service layer
+	user, err := h.userService.GetUser(loginReq)
+	if err != nil {
+		log.Println("Loginhandler :: Error occured while getting user: ", err)
+		transport.SendErrorResponse(w, dtos.TOAST, err.Error())
+	}
+
+	// create a new jwt token with the user details
+	bearerToken, err := auth.GenerateNewToken(user)
+	if err != nil {
+		log.Println("Loginhandler :: Error occured while creating jwt token: ", err)
+		transport.SendErrorResponse(w, dtos.TOAST, err.Error())
+	}
+
+	authResponse := dtos.AuthResponse{
+		BearerToken: bearerToken,
+	}
+
+	// return response back
+	transport.SendJsonResponse(w, 200, authResponse, nil)
 }
 
 func (h *ECommerceHandler) GetAllProductsHandler(w http.ResponseWriter, r *http.Request) {
 	// call service layer
+	productList, err := h.productService.GetAllProducts()
+	if err != nil {
+		log.Println("GetAllProductsHandler :: Error occured while getting products: ", err)
+		transport.SendErrorResponse(w, dtos.TOAST, err.Error())
+	}
+
+	productsRes := dtos.ProductsResponse{
+		Products: productList,
+	}
 
 	// return response back
+	transport.SendJsonResponse(w, 200, productsRes, nil)
 }
 
 func (h *ECommerceHandler) GetProductByIdHandler(w http.ResponseWriter, r *http.Request) {
@@ -69,13 +105,40 @@ func (h *ECommerceHandler) GetProductByIdHandler(w http.ResponseWriter, r *http.
 	productId := vars["productId"]
 
 	// call service layer with product id
+	product, err := h.productService.GetProductById(productId)
+	if err != nil {
+		log.Println("GetProductByIdHandler :: Error occured while getting product: ", err)
+		transport.SendErrorResponse(w, dtos.TOAST, err.Error())
+	}
+
+	productRes := dtos.ProductsResponse{
+		Products: []domain.Product{product},
+	}
 
 	// return response
+	transport.SendJsonResponse(w, 200, productRes, nil)
 }
 
 func (h *ECommerceHandler) UpdateProductInventoryHandler(w http.ResponseWriter, r *http.Request) {
 	var updateProductInventoryReq dtos.UpdateInventoryRequest
+	if err := json.NewDecoder(r.Body).Decode(&updateProductInventoryReq); err != nil {
+		log.Println("UpdateProductInventoryHandler :: Error occured while parsing req body: ", err)
+		transport.SendErrorResponse(w, dtos.TOAST, err.Error())
+	}
 
+	// call service layer
+	productCount, err := h.productService.UpdateProductStock(updateProductInventoryReq)
+	if err != nil {
+		log.Println("GetProductByIdHandler :: Error occured while updating product inventory: ", err)
+		transport.SendErrorResponse(w, dtos.TOAST, err.Error())
+	}
+
+	updateInventoryRes := dtos.UpdateInventoryResponse{
+		CurrentQuantity: productCount,
+	}
+
+	// return response
+	transport.SendJsonResponse(w, 200, updateInventoryRes, nil)
 }
 
 func (h *ECommerceHandler) GetProductsByCategoryHandler(w http.ResponseWriter, r *http.Request) {
@@ -83,10 +146,40 @@ func (h *ECommerceHandler) GetProductsByCategoryHandler(w http.ResponseWriter, r
 	categoryName := vars["category"]
 
 	// call service layer with category name
+	products, err := h.productService.GetProductsByCategory(categoryName)
+	if err != nil {
+		log.Println("GetProductsByCategoryHandler :: Error occured while getting products: ", err)
+		transport.SendErrorResponse(w, dtos.TOAST, err.Error())
+	}
+
+	productsRes := dtos.ProductsResponse{
+		Products: products,
+	}
+
+	// return response
+	transport.SendJsonResponse(w, 200, productsRes, nil)
 }
 
 func (h *ECommerceHandler) SortAndFilterProductHandler(w http.ResponseWriter, r *http.Request) {
 	var sortAndFilterProductRequest dtos.SortAndFilterProductRequest
+	if err := json.NewDecoder(r.Body).Decode(&sortAndFilterProductRequest); err != nil {
+		log.Println("SortAndFilterProductHandler :: Error occured while parsing req body: ", err)
+		transport.SendErrorResponse(w, dtos.TOAST, err.Error())
+	}
+
+	// call service layer
+	products, err := h.productService.SortAndFilterProduct(sortAndFilterProductRequest)
+	if err != nil {
+		log.Println("SortAndFilterProductHandler :: Error occured while getting products: ", err)
+		transport.SendErrorResponse(w, dtos.TOAST, err.Error())
+	}
+
+	productsRes := dtos.ProductsResponse{
+		Products: products,
+	}
+
+	// send response
+	transport.SendJsonResponse(w, 200, productsRes, nil)
 }
 
 func (h *ECommerceHandler) SearchProductHandler(w http.ResponseWriter, r *http.Request) {
@@ -94,8 +187,38 @@ func (h *ECommerceHandler) SearchProductHandler(w http.ResponseWriter, r *http.R
 	keyword := vars["keyword"]
 
 	// call service layer with keyword to search
+	products, err := h.productService.GetProductsByKeyword(keyword)
+	if err != nil {
+		log.Println("SearchProductHandler :: Error occured while getting products: ", err)
+		transport.SendErrorResponse(w, dtos.TOAST, err.Error())
+	}
+
+	productsRes := dtos.ProductsResponse{
+		Products: products,
+	}
+
+	// return response
+	transport.SendJsonResponse(w, 200, productsRes, nil)
 }
 
 func (h *ECommerceHandler) AddNewProductHandler(w http.ResponseWriter, r *http.Request) {
 	var addProductReq dtos.AddNewProductRequest
+	if err := json.NewDecoder(r.Body).Decode(&addProductReq); err != nil {
+		log.Println("AddNewProductHandler :: Error occured while parsing req body: ", err)
+		transport.SendErrorResponse(w, dtos.TOAST, err.Error())
+	}
+
+	// call service layer
+	product, err := h.productService.AddProduct(addProductReq)
+	if err != nil {
+		log.Println("AddNewProductHandler :: Error occured while creating new product: ", err)
+		transport.SendErrorResponse(w, dtos.TOAST, err.Error())
+	}
+
+	addProductRes := dtos.AddNewProductResponse{
+		Product: product,
+	}
+
+	// return response
+	transport.SendJsonResponse(w, 201, addProductRes, nil)
 }

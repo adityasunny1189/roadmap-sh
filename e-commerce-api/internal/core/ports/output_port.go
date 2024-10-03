@@ -7,15 +7,18 @@ import (
 
 type UserService interface {
 	CreateUser(createUserReq dtos.UserSignUpRequest) (domain.User, error)
-	GetUser(userID string) (domain.User, error)
+	GetUser(loginReq dtos.UserLoginRequest) (domain.User, error)
 	UpdateUser(userID string, user domain.User) (domain.User, error)
 }
 
 type ProductService interface {
-	AddProduct(product domain.Product) (domain.Product, error)
-	GetProduct(productID string) (domain.Product, error)
+	AddProduct(addProductReq dtos.AddNewProductRequest) (domain.Product, error)
+	GetProductById(productID string) (domain.Product, error)
+	GetProductsByCategory(categoryName string) ([]domain.Product, error)
+	GetProductsByKeyword(keyword string) ([]domain.Product, error)
 	GetAllProducts() ([]domain.Product, error)
-	UpdateProductStock(productID string, quantity int) (domain.Product, error)
+	UpdateProductStock(updateProductInventory dtos.UpdateInventoryRequest) (int64, error)
+	SortAndFilterProduct(sortAndFilterReq dtos.SortAndFilterProductRequest) ([]domain.Product, error)
 }
 
 type CartService interface {

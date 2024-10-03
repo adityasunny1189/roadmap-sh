@@ -34,6 +34,6 @@ type SortAndFilterProductRequest struct {
 	SortByOption SortAndFilterOption `json:"sort_by_option"`
 }
 
-type SortAndFilterProductResponse struct {
+type ProductsResponse struct {
 	Products []domain.Product `json:"products"`
 }

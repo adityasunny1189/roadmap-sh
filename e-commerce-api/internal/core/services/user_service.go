@@ -16,7 +16,7 @@ func (u *userService) CreateUser(createUserReq dtos.UserSignUpRequest) (domain.U
 }
 
 // GetUser implements ports.UserService.
-func (u *userService) GetUser(userID string) (domain.User, error) {
+func (u *userService) GetUser(loginReq dtos.UserLoginRequest) (domain.User, error) {
 	panic("unimplemented")
 }
 
