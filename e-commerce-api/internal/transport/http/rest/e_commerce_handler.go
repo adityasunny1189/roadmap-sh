@@ -34,3 +34,32 @@ func (h *ECommerceHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 func (h *ECommerceHandler) Login(w http.ResponseWriter, r *http.Request) {
 	var loginReq dtos.UserLoginRequest
 }
+
+func (h *ECommerceHandler) GetAllProductsHandler(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func (h *ECommerceHandler) GetProductByIdHandler(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func (h *ECommerceHandler) UpdateProductInventoryHandler(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func (h *ECommerceHandler) GetProductsByCategoryHandler(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func (h *ECommerceHandler) SortAndFilterProductHandler(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func (h *ECommerceHandler) SearchProductHandler(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func (h *ECommerceHandler) AddNewProductHandler(w http.ResponseWriter, r *http.Request) {
+
+}
+
