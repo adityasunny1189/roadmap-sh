@@ -11,6 +11,11 @@ type userRepositoryImpl struct {
 	db *sql.DB
 }
 
+// GetUserByEmail implements ports.UserRepository.
+func (*userRepositoryImpl) GetUserByEmail(email string) (domain.User, error) {
+	panic("unimplemented")
+}
+
 // CreateUser implements ports.UserRepository.
 func (u *userRepositoryImpl) CreateUser(user domain.User) (domain.User, error) {
 	panic("unimplemented")
