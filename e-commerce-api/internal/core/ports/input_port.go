@@ -12,6 +12,11 @@ type UserRepository interface {
 }
 
 type ProductRepository interface {
+	CreateProduct(product domain.Product) (domain.Product, error)
+	GetProduct(productId string) (domain.Product, error)
+	GetAllProductByCategory(categoryName string) ([]domain.Product, error)
+	SearchProduct(keyword string) ([]domain.Product, error)
+	GetAllProducts() ([]domain.Product, error)	
 }
 
 type CartRepository interface {

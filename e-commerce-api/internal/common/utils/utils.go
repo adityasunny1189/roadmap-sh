@@ -4,6 +4,7 @@ import "golang.org/x/crypto/bcrypt"
 
 const (
 	SECRET_KEY string = "secret-key"
+	ADMIN_EMAIL string = ""
 )
 
 func HashPassword(password string) (string, error) {
