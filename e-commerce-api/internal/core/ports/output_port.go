@@ -22,19 +22,17 @@ type ProductService interface {
 }
 
 type CartService interface {
-	CreateCart(cart domain.Cart) (domain.Cart, error)
-	GetCart(cartID string) (domain.Cart, error)
-	AddItemToCart(cartItem domain.CartItem) (domain.CartItem, error)
-	RemoveItemFromCart(cartItemID string) error
-	UpdateCart(cart domain.Cart) (domain.Cart, error)
-	CheckoutCart(cartID string) error
+	GetAllCarts() ([]domain.Cart, error)
+	GetCartDetails(cartID string) (domain.Cart, []domain.CartItem, error)
+	CreateCart(createCartReq dtos.CreateCartRequest) (domain.Cart, error)
+	UpdateCart(updateCartReq dtos.UpdateCartRequest) (domain.Cart, []domain.CartItem, error)
+	DeleteCart(cartID string) (domain.Cart, error)
 }
 
-type OrderService interface {
-	CreateOrder(order domain.Order) (domain.Order, error)
-	GetOrder(orderID string) (domain.Order, error)
-	GetOrdersByUserID(userID string) ([]domain.Order, error)
-}
-
-type PaymentService interface {
+type CheckoutService interface {
+	CreateOrder(createOrderReq dtos.CreateOrderRequest) (domain.Order, error)
+	GetAllOrders() ([]domain.Order, error)
+	GetOrderDetails(orderID string) (domain.Order, []domain.CartItem, error)
+	GetOrderStatus(orderId string) (domain.Order, error)
+	InititatePayment(paymentReq dtos.PaymentRequest) (domain.Payment, error)
 }

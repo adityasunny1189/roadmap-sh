@@ -15,14 +15,21 @@ import (
 )
 
 type ECommerceHandler struct {
-	userService    ports.UserService
-	productService ports.ProductService
+	userService     ports.UserService
+	productService  ports.ProductService
+	cartService     ports.CartService
+	checkoutService ports.CheckoutService
 }
 
-func NewECommerceHandler(userService ports.UserService, productService ports.ProductService) *ECommerceHandler {
+func NewECommerceHandler(userService ports.UserService,
+	productService ports.ProductService,
+	cartService ports.CartService,
+	checkoutService ports.CheckoutService) *ECommerceHandler {
 	return &ECommerceHandler{
-		userService:    userService,
-		productService: productService,
+		userService:     userService,
+		productService:  productService,
+		cartService:     cartService,
+		checkoutService: checkoutService,
 	}
 }
 

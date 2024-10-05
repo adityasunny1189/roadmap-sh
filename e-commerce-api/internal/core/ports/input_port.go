@@ -22,8 +22,5 @@ type ProductRepository interface {
 type CartRepository interface {
 }
 
-type OrderRepository interface {
-}
-
-type PaymentRepository interface {
+type CheckoutRepository interface {
 }

@@ -15,19 +15,26 @@ import (
 func RunECommerceAPI() {
 	r := mux.NewRouter()
 
+	// TODO: Move the token based auth part from handler layer to middleware
+	// r.Use()
+
 	cfg := config.NewConfig()
 	db := database.Load(cfg)
 
 	// Declare all the repositories
 	userRepo := repository.NewUserRepository(db)
 	productRepo := repository.NewProductRepository(db)
+	cartRepo := repository.NewCartRepository(db)
+	checkoutRepo := repository.NewCheckoutRepository(db)
 
 	// Declare all the services
 	userService := services.NewUserService(userRepo)
 	productService := services.NewProductService(productRepo)
+	cartService := services.NewCartService(cartRepo)
+	checkoutService := services.NewCheckoutService(checkoutRepo)
 
 	// Declare all the handlers
-	handler := rest.NewECommerceHandler(userService, productService)
+	handler := rest.NewECommerceHandler(userService, productService, cartService, checkoutService)
 
 	authSubroute := r.PathPrefix("/auth").Subrouter()
 	authSubroute.HandleFunc("/signup", handler.SignUp).Methods("POST")
@@ -43,11 +50,14 @@ func RunECommerceAPI() {
 	productSubroute.HandleFunc("/search/{keyword}", handler.SearchProductHandler).Methods("GET")
 
 	cartSubroute := r.PathPrefix("/carts").Subrouter()
+	cartSubroute.HandleFunc("/all", nil).Methods("GET")
+	cartSubroute.HandleFunc("/{cartId}", nil).Methods("GET")
 	cartSubroute.HandleFunc("/create", nil).Methods("POST")
-	cartSubroute.HandleFunc("/update", nil).Methods("POST")
+	cartSubroute.HandleFunc("/update", nil).Methods("PUT")
+	cartSubroute.HandleFunc("/delete/{cartId}", nil).Methods("DELETE")
 
 	checkoutSubroute := r.PathPrefix("/checkout").Subrouter()
-	checkoutSubroute.HandleFunc("/orders", nil).Methods("POST")
+	checkoutSubroute.HandleFunc("/orders/create", nil).Methods("POST")
 	checkoutSubroute.HandleFunc("/pay", nil).Methods("POST")
 	checkoutSubroute.HandleFunc("/orders", nil).Methods("GET")
 	checkoutSubroute.HandleFunc("/orders/{orderId}", nil).Methods("GET")

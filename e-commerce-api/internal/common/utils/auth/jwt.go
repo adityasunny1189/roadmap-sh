@@ -26,10 +26,10 @@ func GenerateNewToken(user domain.User) (string, error) {
 	return "Bearer " + tokenString, nil
 }
 
-func VerifyToken(tokenString string) (interface{}, error) {
+func VerifyToken(tokenString string) (string, error) {
 	actualToken := strings.Split(tokenString, " ")
 	if len(actualToken) != 2 {
-		return nil, errors.New("empty bearer token")
+		return "", errors.New("empty bearer token")
 	}
 
 	token, err := jwt.Parse(actualToken[1], func(t *jwt.Token) (interface{}, error) {
@@ -37,14 +37,14 @@ func VerifyToken(tokenString string) (interface{}, error) {
 	})
 
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	if !token.Valid {
-		return nil, errors.New("INVALID TOKEN")
+		return "", errors.New("INVALID TOKEN")
 	}
 
 	userEmail := token.Claims.(jwt.MapClaims)["userEmail"]
 
-	return userEmail, nil
+	return userEmail.(string), nil
 }
