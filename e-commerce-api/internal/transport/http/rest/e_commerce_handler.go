@@ -11,6 +11,7 @@ import (
 	"github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/core/ports"
 	"github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/dtos"
 	transport "github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/transport/http"
+	middleware "github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/middleware/auth"
 	"github.com/gorilla/mux"
 )
 
@@ -98,6 +99,12 @@ func (h *ECommerceHandler) Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *ECommerceHandler) GetAllProductsHandler(w http.ResponseWriter, r *http.Request) {
+	user := middleware.GetUserFromContext(r.Context())
+	if user == nil {
+		transport.SendErrorResponse(w, dtos.TOAST, "access denied")
+		return
+	}
+
 	// call service layer
 	productList, err := h.productService.GetAllProducts()
 	if err != nil {

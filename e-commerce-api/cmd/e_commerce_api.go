@@ -6,6 +6,7 @@ import (
 
 	"github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/common/config"
 	"github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/core/services"
+	"github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/middleware/auth"
 	"github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/storage/database"
 	"github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/storage/repository"
 	"github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/transport/http/rest"
@@ -14,9 +15,6 @@ import (
 
 func RunECommerceAPI() {
 	r := mux.NewRouter()
-
-	// TODO: Move the token based auth part from handler layer to middleware
-	// r.Use()
 
 	cfg := config.NewConfig()
 	db := database.Load(cfg)
@@ -32,6 +30,9 @@ func RunECommerceAPI() {
 	productService := services.NewProductService(productRepo)
 	cartService := services.NewCartService(cartRepo)
 	checkoutService := services.NewCheckoutService(checkoutRepo)
+
+	// Declare all the middlewares
+	r.Use(auth.Middleware(userRepo))
 
 	// Declare all the handlers
 	handler := rest.NewECommerceHandler(userService, productService, cartService, checkoutService)
@@ -64,7 +65,7 @@ func RunECommerceAPI() {
 	checkoutSubroute.HandleFunc("/orders/poll/{orderId}", nil).Methods("GET")
 
 	if err := http.ListenAndServe(":8080", r); err != nil {
-		log.Fatalf("Error: ", err)
+		log.Panic("Error: ", err)
 	}
 }
 
