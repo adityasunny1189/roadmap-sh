@@ -10,8 +10,8 @@ import (
 	"github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/core/domain"
 	"github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/core/ports"
 	"github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/dtos"
-	transport "github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/transport/http"
 	middleware "github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/middleware/auth"
+	transport "github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/transport/http"
 	"github.com/gorilla/mux"
 )
 
@@ -282,4 +282,204 @@ func (h *ECommerceHandler) AddNewProductHandler(w http.ResponseWriter, r *http.R
 			transport.SendErrorResponse(w, dtos.TOAST, "you are not authorized to make this change")
 		}
 	}
+}
+
+func (h *ECommerceHandler) CreateCartHandler(w http.ResponseWriter, r *http.Request) {
+	user := middleware.GetUserFromContext(r.Context())
+	if user == nil {
+		transport.SendErrorResponse(w, dtos.TOAST, "access denied")
+		return
+	}
+
+	var createCartReq dtos.CreateCartRequest
+	if err := json.NewDecoder(r.Body).Decode(&createCartReq); err != nil {
+		transport.SendErrorResponse(w, dtos.TOAST, err.Error())
+		return
+	}
+
+	cart, err := h.cartService.CreateCart(createCartReq)
+	if err != nil {
+		transport.SendErrorResponse(w, dtos.TOAST, err.Error())
+		return
+	}
+
+	createCartRes := dtos.CreateCartResponse{
+		Cart: cart,
+	}
+
+	transport.SendJsonResponse(w, 201, createCartRes, nil)
+}
+
+func (h *ECommerceHandler) GetCartHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	cartId := vars["cartId"]
+
+	// call service layer to find the cart
+	cart, cartItems, err := h.cartService.GetCartDetails(cartId)
+	if err != nil {
+		log.Println("GetCartHandler :: Error occured while getting cart details: ", err)
+		transport.SendErrorResponse(w, dtos.TOAST, err.Error())
+		return
+	}
+
+	// create the response object
+	getCartDetailsResponse := dtos.GetCartDetailsResponse{
+		CartDetails: dtos.CartDto{
+			CartMetadata: cart,
+			CartItems:    cartItems,
+		},
+	}
+
+	// return the response
+	transport.SendJsonResponse(w, 200, getCartDetailsResponse, nil)
+}
+
+func (h *ECommerceHandler) UpdateCartHandler(w http.ResponseWriter, r *http.Request) {
+	var updateCartReq dtos.UpdateCartRequest
+	if err := json.NewDecoder(r.Body).Decode(&updateCartReq); err != nil {
+		transport.SendErrorResponse(w, dtos.TOAST, err.Error())
+		return
+	}
+
+	cart, cartItems, err := h.cartService.UpdateCart(updateCartReq)
+	if err != nil {
+		log.Println("UpdateCartHandler :: Error occured while updating cart details: ", err)
+		transport.SendErrorResponse(w, dtos.TOAST, err.Error())
+		return
+	}
+
+	// create the response object
+	updateCartRes := dtos.UpdateCartResponse{
+		CartDetails: dtos.CartDto{
+			CartMetadata: cart,
+			CartItems:    cartItems,
+		},
+	}
+
+	// return the response
+	transport.SendJsonResponse(w, 200, updateCartRes, nil)
+}
+
+func (h *ECommerceHandler) DeleteCartHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	cartId := vars["cartId"]
+
+	cart, err := h.cartService.DeleteCart(cartId)
+	if err != nil {
+		log.Println("DeleteCartHandler :: Error occured while deleting cart: ", err)
+		transport.SendErrorResponse(w, dtos.TOAST, err.Error())
+		return
+	}
+
+	deleteCartRes := dtos.DeleteCartResponse{
+		Cart: cart,
+	}
+
+	transport.SendJsonResponse(w, 200, deleteCartRes, nil)
+}
+
+func (h *ECommerceHandler) CreateOrderHandler(w http.ResponseWriter, r *http.Request) {
+	var createOrderReq dtos.CreateOrderRequest
+	if err := json.NewDecoder(r.Body).Decode(&createOrderReq); err != nil {
+		transport.SendErrorResponse(w, dtos.TOAST, err.Error())
+		return
+	}
+
+	order, err := h.checkoutService.CreateOrder(createOrderReq)
+	if err != nil {
+		log.Println("CreateOrderHandler :: Error occured while creating order: ", err)
+		transport.SendErrorResponse(w, dtos.TOAST, err.Error())
+		return
+	}
+
+	createOrderRes := dtos.CreateOrderResponse{
+		Order: order,
+	}
+
+	transport.SendJsonResponse(w, 201, createOrderRes, nil)
+}
+
+func (h *ECommerceHandler) GetAllOrdersHandler(w http.ResponseWriter, r *http.Request) {
+	user := middleware.GetUserFromContext(r.Context())
+	if user == nil {
+		transport.SendErrorResponse(w, dtos.TOAST, "access denied")
+		return
+	}
+
+	orders, err := h.checkoutService.GetAllOrders(string(rune(user.ID)))
+	if err != nil {
+		log.Println("GetAllOrdersHandler :: Error occured while getting orders: ", err)
+		transport.SendErrorResponse(w, dtos.TOAST, err.Error())
+		return
+	}
+
+	getAllOrdersRes := dtos.GetAllOrdersResponse{
+		Orders: orders,
+	}
+
+	transport.SendJsonResponse(w, 200, getAllOrdersRes, nil)
+}
+
+func (h *ECommerceHandler) GetOrderHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	orderId := vars["orderId"]
+
+	// call service layer to find the cart
+	order, items, err := h.checkoutService.GetOrderDetails(orderId)
+	if err != nil {
+		log.Println("GetOrderHandler :: Error occured while getting order details: ", err)
+		transport.SendErrorResponse(w, dtos.TOAST, err.Error())
+		return
+	}
+
+	// create the response object
+	getOrderDetailsResponse := dtos.GetOrderDetailsResponse{
+		OrderDetails: order,
+		Items:        items,
+	}
+
+	// return the response
+	transport.SendJsonResponse(w, 200, getOrderDetailsResponse, nil)
+}
+
+func (h *ECommerceHandler) GetOrderStatusHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	orderId := vars["orderId"]
+
+	// call service layer to find the cart
+	order, err := h.checkoutService.GetOrderStatus(orderId)
+	if err != nil {
+		log.Println("GetOrderStatusHandler :: Error occured while getting order details: ", err)
+		transport.SendErrorResponse(w, dtos.TOAST, err.Error())
+		return
+	}
+
+	// create the response object
+	getOrderStatusResponse := dtos.OrderStatusPollingResponse{
+		Status: string(order.OrderState),
+	}
+
+	// return the response
+	transport.SendJsonResponse(w, 200, getOrderStatusResponse, nil)
+}
+
+func (h *ECommerceHandler) InitiatePaymentHandler(w http.ResponseWriter, r *http.Request) {
+	var paymentReq dtos.PaymentRequest
+	if err := json.NewDecoder(r.Body).Decode(&paymentReq); err != nil {
+		transport.SendErrorResponse(w, dtos.TOAST, err.Error())
+		return
+	}
+
+	paymentDetails, err := h.checkoutService.InititatePayment(paymentReq)
+	if err != nil {
+		log.Println("InitiatePaymentHandler :: Error occured while payment: ", err)
+		transport.SendErrorResponse(w, dtos.TOAST, err.Error())
+		return
+	}
+
+	paymentRes := dtos.PaymentResponse{
+		Status: string(paymentDetails.PaymentState),
+	}
+
+	transport.SendJsonResponse(w, 200, paymentRes, nil)
 }
