@@ -16,7 +16,7 @@ func (*checkoutService) CreateOrder(createOrderReq dtos.CreateOrderRequest) (dom
 }
 
 // GetAllOrders implements ports.CheckoutService.
-func (*checkoutService) GetAllOrders() ([]domain.Order, error) {
+func (*checkoutService) GetAllOrders(userId string) ([]domain.Order, error) {
 	panic("unimplemented")
 }
 

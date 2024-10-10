@@ -6,6 +6,7 @@ import (
 
 	"github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/common/config"
 	"github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/core/services"
+	"github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/middleware/auth"
 	"github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/storage/database"
 	"github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/storage/repository"
 	"github.com/adityasunny1189/roadmap-sh/e-commerce-api/internal/transport/http/rest"
@@ -15,9 +16,7 @@ import (
 func RunECommerceAPI() {
 	r := mux.NewRouter()
 
-	// TODO: Move the token based auth part from handler layer to middleware
-	// r.Use()
-
+	// Load and Initiate all configs
 	cfg := config.NewConfig()
 	db := database.Load(cfg)
 
@@ -33,9 +32,13 @@ func RunECommerceAPI() {
 	cartService := services.NewCartService(cartRepo)
 	checkoutService := services.NewCheckoutService(checkoutRepo)
 
+	// Declare all the middlewares
+	r.Use(auth.Middleware(userRepo))
+
 	// Declare all the handlers
 	handler := rest.NewECommerceHandler(userService, productService, cartService, checkoutService)
 
+	// Declare all the routes
 	authSubroute := r.PathPrefix("/auth").Subrouter()
 	authSubroute.HandleFunc("/signup", handler.SignUp).Methods("POST")
 	authSubroute.HandleFunc("/login", handler.Login).Methods("POST")
@@ -50,21 +53,20 @@ func RunECommerceAPI() {
 	productSubroute.HandleFunc("/search/{keyword}", handler.SearchProductHandler).Methods("GET")
 
 	cartSubroute := r.PathPrefix("/carts").Subrouter()
-	cartSubroute.HandleFunc("/all", nil).Methods("GET")
-	cartSubroute.HandleFunc("/{cartId}", nil).Methods("GET")
-	cartSubroute.HandleFunc("/create", nil).Methods("POST")
-	cartSubroute.HandleFunc("/update", nil).Methods("PUT")
-	cartSubroute.HandleFunc("/delete/{cartId}", nil).Methods("DELETE")
+	cartSubroute.HandleFunc("/{cartId}", handler.GetCartHandler).Methods("GET")
+	cartSubroute.HandleFunc("/create", handler.CreateCartHandler).Methods("POST")
+	cartSubroute.HandleFunc("/update", handler.UpdateCartHandler).Methods("PUT")
+	cartSubroute.HandleFunc("/delete/{cartId}", handler.DeleteCartHandler).Methods("DELETE")
 
 	checkoutSubroute := r.PathPrefix("/checkout").Subrouter()
-	checkoutSubroute.HandleFunc("/orders/create", nil).Methods("POST")
-	checkoutSubroute.HandleFunc("/pay", nil).Methods("POST")
-	checkoutSubroute.HandleFunc("/orders", nil).Methods("GET")
-	checkoutSubroute.HandleFunc("/orders/{orderId}", nil).Methods("GET")
-	checkoutSubroute.HandleFunc("/orders/poll/{orderId}", nil).Methods("GET")
+	checkoutSubroute.HandleFunc("/orders/create", handler.CreateOrderHandler).Methods("POST")
+	checkoutSubroute.HandleFunc("/pay", handler.InitiatePaymentHandler).Methods("POST")
+	checkoutSubroute.HandleFunc("/orders", handler.GetAllOrdersHandler).Methods("GET")
+	checkoutSubroute.HandleFunc("/orders/{orderId}", handler.GetOrderHandler).Methods("GET")
+	checkoutSubroute.HandleFunc("/orders/poll/{orderId}", handler.GetOrderStatusHandler).Methods("GET")
 
 	if err := http.ListenAndServe(":8080", r); err != nil {
-		log.Fatalf("Error: ", err)
+		log.Panic("Error: ", err)
 	}
 }
 
