@@ -16,6 +16,7 @@ func SendJsonResponse(w http.ResponseWriter,
 		Data:                 data,
 		ErrorHandlingDetails: errorHandlingDetails,
 	}
+	w.WriteHeader(status)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(apiResponse)
 }
