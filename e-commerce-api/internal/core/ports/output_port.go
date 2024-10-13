@@ -31,7 +31,7 @@ type CartService interface {
 
 type CheckoutService interface {
 	CreateOrder(createOrderReq dtos.CreateOrderRequest) (domain.Order, error)
-	GetAllOrders() ([]domain.Order, error)
+	GetAllOrders(userId string) ([]domain.Order, error)
 	GetOrderDetails(orderID string) (domain.Order, []domain.CartItem, error)
 	GetOrderStatus(orderId string) (domain.Order, error)
 	InititatePayment(paymentReq dtos.PaymentRequest) (domain.Payment, error)
