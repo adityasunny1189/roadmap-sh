@@ -3,7 +3,7 @@ module github.com/adityasunny1189/roadmap-sh/auth
 go 1.23.2
 
 require (
-	github.com/adityasunny1189/protorepo v0.0.8
+	github.com/adityasunny1189/protorepo v0.0.9
 	github.com/go-sql-driver/mysql v1.7.0
 	github.com/golang-migrate/migrate/v4 v4.18.1
 	github.com/google/uuid v1.6.0

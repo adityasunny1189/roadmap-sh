@@ -56,3 +56,21 @@ func (h *GrpcHandler) SignUp(ctx context.Context, req *authpb.SignUpRequest) (*a
 		BearerToken: bearerToken,
 	}, nil
 }
+
+func (h *GrpcHandler) Verify(ctx context.Context, req *authpb.VerifyTokenRequest) (*authpb.VerifyTokenResponse, error) {
+	ok, user := h.authService.Verify(req.BearerToken)
+	if !ok {
+		return &authpb.VerifyTokenResponse{
+			IsVerified: false,
+		}, nil
+	}
+
+	return &authpb.VerifyTokenResponse{
+		IsVerified: true,
+		User: &authpb.User{
+			UserId:   user.UserId.String(),
+			Username: user.Username,
+			Email:    user.Email,
+		},
+	}, nil
+}

@@ -2,8 +2,8 @@ github.com/Azure/go-ansiterm v0.0.0-20230124172434-306776ec8161 h1:L/gRVlceqvL25
 github.com/Azure/go-ansiterm v0.0.0-20230124172434-306776ec8161/go.mod h1:xomTg63KZ2rFqZQzSB4Vz2SUXa1BpHTVz9L5PTmPC4E=
 github.com/Microsoft/go-winio v0.6.2 h1:F2VQgta7ecxGYO8k3ZZz3RS8fVIXVxONVUPlNERoyfY=
 github.com/Microsoft/go-winio v0.6.2/go.mod h1:yd8OoFMLzJbo9gZq8j5qaps8bJ9aShtEA8Ipt1oGCvU=
-github.com/adityasunny1189/protorepo v0.0.8 h1:mk76yyK2envLK7S7VWtP0snL/s9eqI09BBUdAGESaOE=
-github.com/adityasunny1189/protorepo v0.0.8/go.mod h1:X4mGLd2rIfiHJtpdp9ROtvOXc76zPLYXFBa3zAzDwt0=
+github.com/adityasunny1189/protorepo v0.0.9 h1:SY4PR1TM+rahscdWR9QAf/hJBrxbssTjNAlZ39fv3MY=
+github.com/adityasunny1189/protorepo v0.0.9/go.mod h1:X4mGLd2rIfiHJtpdp9ROtvOXc76zPLYXFBa3zAzDwt0=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
