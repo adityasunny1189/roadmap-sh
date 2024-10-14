@@ -1,6 +1,7 @@
 package main
 
 import (
+	dbmigration "github.com/adityasunny1189/roadmap-sh/auth/db"
 	"github.com/adityasunny1189/roadmap-sh/auth/internal/commons/config"
 	"github.com/adityasunny1189/roadmap-sh/auth/internal/core/services"
 	"github.com/adityasunny1189/roadmap-sh/auth/internal/storage/database"
@@ -13,12 +14,13 @@ func main() {
 	cfg := config.LoadConfig()
 
 	// initialize database
-	db := database.Load(cfg)
+	conn := database.Load(cfg)
 
 	// run db migration script
+	dbmigration.Migrate(conn)
 
 	// initialize repository
-	authRepository := repository.NewAuthRepository(db)
+	authRepository := repository.NewAuthRepository(conn)
 
 	// initialize service
 	authService := services.NewAuthService(authRepository)
