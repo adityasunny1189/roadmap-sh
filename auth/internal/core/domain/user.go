@@ -6,12 +6,12 @@ import (
 )
 
 type User struct {
-	UserId    uuid.UUID `json:"user_id"`
-	FirstName string    `json:"first_name"`
-	LastName  string    `json:"last_name"`
-	Username  string    `json:"username"`
-	Email     string    `json:"email"`
-	Password  string    `json:"password"`
+	UserId uuid.UUID `json:"user_id"`
+	// FirstName string    `json:"first_name"`
+	// LastName  string    `json:"last_name"`
+	Username string `json:"username"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 func (u *User) HashPassword(password string) (string, error) {

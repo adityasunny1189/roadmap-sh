@@ -6,6 +6,7 @@ import (
 	"net"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 
 	authpb "github.com/adityasunny1189/protorepo/protogen/go/auth/v1"
 	"github.com/adityasunny1189/roadmap-sh/auth/internal/core/ports"
@@ -37,6 +38,7 @@ func (h *GrpcHandler) Start() {
 
 	grpcServer := grpc.NewServer()
 	h.server = grpcServer
+	reflection.Register(grpcServer)
 
 	authpb.RegisterAuthServiceServer(grpcServer, h)
 

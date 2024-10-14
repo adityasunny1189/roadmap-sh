@@ -22,7 +22,7 @@ func LoadConfig() *Config {
 			User:     os.Getenv("DB_USER"),
 			Password: os.Getenv("DB_PASSWORD"),
 			Net:      "tcp",
-			Address:  "host.docker.internal:3306", //"127.0.0.1:3306",
+			Address:  "127.0.0.1:3306", //"host.docker.internal:3306", //
 			DBName:   "auth",
 			DB:       "mysql",
 		},

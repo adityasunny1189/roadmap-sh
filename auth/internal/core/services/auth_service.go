@@ -36,7 +36,7 @@ func (a *authService) SignIn(email, password string) (string, error) {
 
 func (a *authService) SignUp(user domain.User) (string, error) {
 	// check for duplicate details
-	user, err := a.authRepo.GetUserByEmail(user.Email)
+	_, err := a.authRepo.GetUserByEmail(user.Email)
 	if err != nil {
 		u, err := a.authRepo.CreateUser(user)
 		if err != nil {

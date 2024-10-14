@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"log"
 
 	"github.com/adityasunny1189/roadmap-sh/auth/internal/core/domain"
 	"github.com/adityasunny1189/roadmap-sh/auth/internal/core/ports"
@@ -13,19 +14,31 @@ type authRepository struct {
 	db *gorm.DB
 }
 
-// CreateUser implements ports.AuthRepository.
 func (a *authRepository) CreateUser(user domain.User) (domain.User, error) {
-	panic("unimplemented")
+	if err := a.db.Create(user).Error; err != nil {
+		log.Println("Can't create user: ", err)
+		return domain.User{}, err
+	}
+
+	return user, nil
 }
 
-// GetUserByEmail implements ports.AuthRepository.
 func (a *authRepository) GetUserByEmail(email string) (domain.User, error) {
-	panic("unimplemented")
+	var user domain.User
+	if err := a.db.First(&user, "email = ?", email).Error; err != nil {
+		log.Println("Can't find data: ", err)
+		return user, err
+	}
+	return user, nil
 }
 
-// GetUserByUsername implements ports.AuthRepository.
 func (a *authRepository) GetUserByUsername(username string) (domain.User, error) {
-	panic("unimplemented")
+	var user domain.User
+	if err := a.db.First(&user, "username = ?", username).Error; err != nil {
+		log.Println("Can't find data: ", err)
+		return user, err
+	}
+	return user, nil
 }
 
 func NewAuthRepository(conn *sql.DB) ports.AuthRepository {
